@@ -6,8 +6,8 @@ import {
   Spinner,
   Text,
   TextField,
-  extend,
-  useApi,
+  reactExtension,
+  useCustomer,
   useShippingAddress
 } from "@shopify/checkout-ui-extensions-react";
 import { useCallback, useState } from "react";
@@ -16,12 +16,10 @@ type Status = "idle" | "loading" | "valid" | "invalid" | "error" | "ineligible";
 
 const APP_PROXY_BASE_PATH = "/apps/vat";
 
-export default extend("Checkout::Dynamic::Render", (root) => {
-  root.appendChild(<VatCollector />);
-});
+export default reactExtension("Checkout::Dynamic::Render", () => <App />);
 
-function VatCollector() {
-  const { checkout } = useApi();
+function App() {
+  const customer = useCustomer();
   const shippingAddress = useShippingAddress();
   const [vatNumber, setVatNumber] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -56,7 +54,7 @@ function VatCollector() {
         return;
       }
 
-      const customerId = checkout?.customer?.id;
+      const customerId = customer?.id;
       if (!customerId) {
         setStatus("error");
         setMessage("Please sign in before applying a VAT exemption.");
@@ -79,14 +77,14 @@ function VatCollector() {
         throw new Error("APPLY_FAILED");
       }
 
-      await checkout?.refresh();
+      // There is no checkout.refresh() anymore.
       setStatus("valid");
       setMessage("VAT number validated. Taxes have been updated.");
     } catch (error) {
       setStatus("error");
       setMessage("The validation service is temporarily unavailable. Please try again.");
     }
-  }, [checkout, countryCode, vatNumber]);
+  }, [customer, countryCode, vatNumber]);
 
   return (
     <BlockStack spacing="tight">
@@ -94,8 +92,7 @@ function VatCollector() {
         label="VAT number"
         value={vatNumber}
         onChange={setVatNumber}
-        helpText="Validated live with the EU VIES service."
-        autoComplete="off"
+        autocomplete={false}
       />
       <InlineStack>
         <Button onPress={handleValidate} accessibilityLabel="Validate VAT number">
@@ -119,20 +116,20 @@ function StatusBanner({ status, message }: StatusBannerProps) {
   switch (status) {
     case "valid":
       return (
-        <Banner tone="success">
+        <Banner status="success">
           <Text>{message}</Text>
         </Banner>
       );
     case "invalid":
     case "ineligible":
       return (
-        <Banner tone="critical">
+        <Banner status="critical">
           <Text>{message}</Text>
         </Banner>
       );
     case "error":
       return (
-        <Banner tone="warning">
+        <Banner status="warning">
           <Text>{message}</Text>
         </Banner>
       );

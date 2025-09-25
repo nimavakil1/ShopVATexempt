@@ -4,7 +4,7 @@ import { getCache, setCache } from "./cache";
 
 const log = pino({ name: "vies" });
 
-export interface VatValidationResult {
+export type VatValidationResult = {
   valid: boolean;
   normalizedVat: string;
   name: string;
@@ -41,7 +41,7 @@ export async function validateVat(vatNumberRaw: string, countryCode: string): Pr
       method: "POST",
       headers: { "Content-Type": "text/xml" },
       body: soapEnvelope,
-      timeout: 10_000
+      
     }
   );
 
