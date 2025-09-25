@@ -1,0 +1,16 @@
+{
+  "name": "checkout-vat-extension",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@shopify/checkout-ui-extensions-react": "^2024.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.25",
+    "typescript": "^5.4.5"
+  }
+}

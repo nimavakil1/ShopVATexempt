@@ -1,0 +1,12 @@
+name = "checkout-vat-field"
+type = "checkout_ui_extension"
+
+[[extensions.targeting]]
+module = "./dist/CheckoutVatField.js"
+
+[[extensions.targeting.capabilities]]
+api_access = "write"
+
+[[extensions.targeting.target]]
+module = "./dist/CheckoutVatField.js"
+expansion_points = ["Checkout::Dynamic::Render"]
