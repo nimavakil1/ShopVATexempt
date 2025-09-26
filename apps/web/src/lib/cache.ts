@@ -6,11 +6,16 @@ type CacheValue = Record<string, unknown> | string | number | boolean | null;
 const log = pino({ name: "cache" });
 
 const redisUrl = process.env.REDIS_URL;
-type RedisClient = InstanceType<typeof IORedis>;
-let redis: RedisClient | undefined;
+type RedisLike = {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, mode: "EX", ttl: number): Promise<"OK" | null>;
+  on(event: "error", listener: (error: unknown) => void): void;
+};
+let redis: RedisLike | undefined;
 
 if (redisUrl) {
-  redis = new IORedis(redisUrl);
+  const RedisCtor: any = IORedis as any;
+  redis = new RedisCtor(redisUrl) as RedisLike;
   redis.on("error", (error: unknown) => {
     log.warn({ error }, "Redis connection error");
   });
