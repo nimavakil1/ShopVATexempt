@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import IORedis from "ioredis";
 import pino from "pino";
 
 type CacheValue = Record<string, unknown> | string | number | boolean | null;
@@ -6,11 +6,12 @@ type CacheValue = Record<string, unknown> | string | number | boolean | null;
 const log = pino({ name: "cache" });
 
 const redisUrl = process.env.REDIS_URL;
-let redis: Redis | undefined;
+type RedisClient = InstanceType<typeof IORedis>;
+let redis: RedisClient | undefined;
 
 if (redisUrl) {
-  redis = new Redis(redisUrl);
-  redis.on("error", (error) => {
+  redis = new IORedis(redisUrl);
+  redis.on("error", (error: unknown) => {
     log.warn({ error }, "Redis connection error");
   });
 }
