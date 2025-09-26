@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify.js";
+import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, ShopifySession } from "../lib/shopify.js";
 
 interface AuthedRequest extends Request {
   shopifySession?: ShopifySession;
@@ -25,18 +25,6 @@ export async function vatRevokeRoute(req: AuthedRequest, res: Response) {
     await adminGraphql(session, MUT_CUSTOMER_TAXEXEMPT, {
       id: customerId,
       taxExempt: false
-    });
-
-    await adminGraphql(session, MUT_SET_METAFIELDS, {
-      ownerId: customerId,
-      metafields: [
-        {
-          namespace: "b2b",
-          key: "vat_valid",
-          type: "boolean",
-          value: "false"
-        }
-      ]
     });
 
     res.json({ ok: true, taxExempt: false, reason: reason ?? null });

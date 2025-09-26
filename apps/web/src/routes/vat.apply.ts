@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify.js";
+import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, ShopifySession } from "../lib/shopify.js";
 import { isEuNonBelgium } from "../lib/eu.js";
 
 type ApplyBody = {
@@ -32,37 +32,6 @@ export async function vatApplyRoute(req: AuthedRequest, res: Response) {
     await adminGraphql(session, MUT_CUSTOMER_TAXEXEMPT, {
       id: customerId,
       taxExempt: true
-    });
-
-    const now = new Date().toISOString();
-    await adminGraphql(session, MUT_SET_METAFIELDS, {
-      ownerId: customerId,
-      metafields: [
-        {
-          namespace: "b2b",
-          key: "vat_number",
-          type: "single_line_text_field",
-          value: vatNumber
-        },
-        {
-          namespace: "b2b",
-          key: "vat_country",
-          type: "single_line_text_field",
-          value: countryCode
-        },
-        {
-          namespace: "b2b",
-          key: "vat_valid",
-          type: "boolean",
-          value: "true"
-        },
-        {
-          namespace: "b2b",
-          key: "vat_last_checked_at",
-          type: "date_time",
-          value: now
-        }
-      ]
     });
 
     res.json({ ok: true, taxExempt: true });
