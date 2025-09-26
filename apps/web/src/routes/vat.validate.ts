@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { validateVat } from "../lib/vies";
-import { isEuNonBelgium } from "../lib/eu";
+import { validateVat } from "../lib/vies.js";
+import { isEuNonBelgium } from "../lib/eu.js";
 
 export async function vatValidateRoute(req: Request, res: Response) {
   try {

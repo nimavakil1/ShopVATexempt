@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import pino from "pino";
-import { getCache, setCache } from "./cache";
+import { getCache, setCache } from "./cache.js";
 
 const log = pino({ name: "vies" });
 
@@ -11,14 +11,24 @@ export type VatValidationResult = {
   address: string;
 }
 
-function normalizeVatNumber(vatNumberRaw: string): string {
-  return vatNumberRaw.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+function normalizeVatNumber(vatNumberRaw: string, countryCodeRaw: string): { vat: string; country: string } {
+  const cleaned = vatNumberRaw.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  // VIES expects GR as EL
+  const inputCountry = countryCodeRaw.toUpperCase();
+  const viesCountry = inputCountry === "GR" ? "EL" : inputCountry;
+
+  // If the VAT number starts with the country code, strip it
+  let vat = cleaned;
+  if (vat.startsWith(viesCountry)) {
+    vat = vat.slice(viesCountry.length);
+  }
+
+  return { vat, country: viesCountry };
 }
 
 export async function validateVat(vatNumberRaw: string, countryCode: string): Promise<VatValidationResult> {
-  const vatNumber = normalizeVatNumber(vatNumberRaw);
-  const upperCountry = countryCode.toUpperCase();
-  const cacheKey = `vies:${upperCountry}:${vatNumber}`;
+  const { vat, country } = normalizeVatNumber(vatNumberRaw, countryCode);
+  const cacheKey = `vies:${country}:${vat}`;
 
   const cached = await getCache<VatValidationResult>(cacheKey);
   if (cached) {
@@ -29,8 +39,8 @@ export async function validateVat(vatNumberRaw: string, countryCode: string): Pr
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <checkVat xmlns="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
-      <countryCode>${upperCountry}</countryCode>
-      <vatNumber>${vatNumber}</vatNumber>
+      <countryCode>${country}</countryCode>
+      <vatNumber>${vat}</vatNumber>
     </checkVat>
   </soap:Body>
 </soap:Envelope>`;
@@ -58,7 +68,7 @@ export async function validateVat(vatNumberRaw: string, countryCode: string): Pr
 
   const result: VatValidationResult = {
     valid,
-    normalizedVat: vatNumber,
+    normalizedVat: vat,
     name,
     address
   };

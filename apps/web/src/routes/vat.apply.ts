@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify";
-import { isEuNonBelgium } from "../lib/eu";
+import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify.js";
+import { isEuNonBelgium } from "../lib/eu.js";
 
 type ApplyBody = {
   customerId?: string;

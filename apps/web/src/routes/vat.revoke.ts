@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify";
+import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, MUT_SET_METAFIELDS, ShopifySession } from "../lib/shopify.js";
 
 interface AuthedRequest extends Request {
   shopifySession?: ShopifySession;

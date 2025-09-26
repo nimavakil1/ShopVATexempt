@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { isEuNonBelgium } from "../lib/eu";
-import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, ShopifySession } from "../lib/shopify";
+import { isEuNonBelgium } from "../lib/eu.js";
+import { adminGraphql, MUT_CUSTOMER_TAXEXEMPT, ShopifySession } from "../lib/shopify.js";
 
 interface AuthedRequest extends Request {
   shopifySession?: ShopifySession;

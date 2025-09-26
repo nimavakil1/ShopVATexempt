@@ -1,12 +1,12 @@
 import "dotenv/config";
 import express from "express";
 import pino from "pino";
-import { verifyProxySignature } from "./lib/hmac";
-import { verifyWebhookSignature } from "./lib/webhook";
-import { vatValidateRoute } from "./routes/vat.validate";
-import { vatApplyRoute } from "./routes/vat.apply";
-import { vatRevokeRoute } from "./routes/vat.revoke";
-import { customersUpdateWebhook } from "./webhooks/customers.update";
+import { verifyProxySignature } from "./lib/hmac.js";
+import { verifyWebhookSignature } from "./lib/webhook.js";
+import { vatValidateRoute } from "./routes/vat.validate.js";
+import { vatApplyRoute } from "./routes/vat.apply.js";
+import { vatRevokeRoute } from "./routes/vat.revoke.js";
+import { customersUpdateWebhook } from "./webhooks/customers.update.js";
 
 const log = pino({ name: "vat-app" });
 
