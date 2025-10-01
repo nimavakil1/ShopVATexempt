@@ -62,9 +62,10 @@ export async function validateVat(vatNumberRaw: string, countryCode: string): Pr
   }
 
   const xml = await response.text();
-  const valid = /<valid>true<\/valid>/i.test(xml);
-  const name = (xml.match(/<name>([^<]*)<\/name>/i)?.[1] || "").trim();
-  const address = (xml.match(/<address>([^<]*)<\/address>/i)?.[1] || "").trim();
+  log.info({ xml, vatNumber: vat, country }, "VIES raw response");
+  const valid = /<[^>]*:?valid>true<\/[^>]*:?valid>/i.test(xml);
+  const name = (xml.match(/<[^>]*:?name>([^<]*)<\/[^>]*:?name>/i)?.[1] || "").trim();
+  const address =(xml.match(/<[^>]*:?address>([^<]*)<\/[^>]*:?address>/i)?.[1] || "").trim();
 
   const result: VatValidationResult = {
     valid,

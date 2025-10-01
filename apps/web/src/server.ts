@@ -14,13 +14,26 @@ const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const apiSecret = process.env.SHOPIFY_API_SECRET || "";
 
-app.use(
-  express.json({
-    verify: (req, _res, buf) => {
-      (req as any).rawBody = buf.toString("utf8");
+ app.use(
+    express.json({
+      verify: (req, _res, buf) => {
+        (req as any).rawBody = buf.toString("utf8");
+      }
+    })
+  );
+
+  // Add CORS headers
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://acropaq.com');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Shopify-Shop-Domain, X-Shopify-Access-Token');
+
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+    } else {
+      next();
     }
-  })
-);
+  });
 
 app.use((req, _res, next) => {
   const headerShop = req.get("X-Shopify-Shop-Domain") ?? process.env.SHOP;
