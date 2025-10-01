@@ -1,0 +1,13 @@
+{
+  "name": "shop-vat-exempt",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web",
+    "apps/checkout-ui-extension"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "lint": "echo 'No root lint'"
+  }
+}
